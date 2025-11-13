@@ -3,60 +3,69 @@ package Turtle;
 public class Turtle {
     private Pen pen;
     private Direction direction;
+    private int newRow = 0;
+    private int newColumn = 0;
 
-    public Direction getDirection() {
+    private int currentDirection = 0;
+
+
+    public void moveTurtle(SketchPad moves){
+        SketchPad sketchPad = new SketchPad();
+        if()
+        for (int i = 0; i < sketchPad.floor.length; i++) {
+
+        }
+    }
+
+    public Direction changeDirectionToRight(){
+        if(direction == Direction.NORTH){
+            direction = Direction.EAST;
+        }else if (direction == Direction.SOUTH) {
+            direction = Direction.WEST;
+
+        }else if (direction == Direction.EAST) {
+            direction = Direction.SOUTH;
+
+        }else if (direction == Direction.WEST) {
+            direction = Direction.NORTH;
+        }
         return direction;
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    public Direction changeDirectionToLeft(){
+        if(direction == Direction.EAST){
+            direction = Direction.NORTH;
+        }else if (direction == Direction.WEST) {
+            direction = Direction.SOUTH;
+
+        }else if (direction == Direction.SOUTH) {
+            direction = Direction.EAST;
+
+        }else if (direction == Direction.NORTH ) {
+            direction = Direction.WEST;
+        }
+        return direction;
     }
 
-    public Pen getPen() {
+    public Pen changePenStatus(Pen value){
+        if (value == Pen.UP){
+           pen = Pen.UP;
+
+        }else if(value == Pen.DOWN){
+            pen = Pen.DOWN;
+
+        }
         return pen;
     }
 
-    public void setPen(Pen pen) {
-        this.pen = pen;
-    }
-
-    public Turtle moveTurtle(Pen value, Direction number){
-        Turtle turtle = new Turtle();
-        setPen(value);
-        setDirection(number);
-
-        return turtle;
-    }
-
-    public int changeDirection(int number){
-        if(number == 1){
-            direction = Direction.NORTH;
-            System.out.println(direction);
-        }else if (number == 2) {
-            direction = Direction.SOUTH;
-            System.out.println(direction);
-        }else if (number == 3 ) {
-            direction = Direction.WEST;
-            System.out.println(direction);
-        }else if (number == 4) {
-            direction = Direction.EAST;
-            System.out.println(direction);
-        }else {
-            throw new IllegalArgumentException("input number out of range");
+    public void turtleFloor(){
+        SketchPad sketchPad = new SketchPad();
+        for (int[] row : sketchPad.floor) {
+            for (int column : row) {
+                System.out.print(column == 1 ? 1 : 0);
+            }
+            System.out.println();
         }
-        return number;
     }
 
-    public int changePenStatus(int value){
-        if (value == 1){
-           pen = Pen.UP;
-            System.out.println(pen);
-        }else if(value == 2){
-            pen = Pen.DOWN;
-            System.out.println(pen);
-        }else {
-            throw new IllegalArgumentException("input value out of range");
-        }
-        return value;
-    }
 }

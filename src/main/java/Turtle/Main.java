@@ -2,8 +2,19 @@ package Turtle;
 
 public class Main {
     public static void main(String[] args) {
-        SketchPad sketchPad = new SketchPad();
+        Turtle turtle = new Turtle();
 
-        sketchPad.turtleFloor();
+        turtle.changePenStatus(Pen.DOWN);
+        turtle.moveTurtle(3);
+        turtle.changeDirectionToRight();
+        turtle.moveTurtle(3);
+        turtle.changeDirectionToRight();
+        turtle.moveTurtle(3);
+        turtle.changeDirectionToRight();
+        turtle.moveTurtle(3);
+        turtle.changePenStatus(Pen.UP);
+        turtle.turtleFloor();
+
+
     }
 }
