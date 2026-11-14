@@ -55,7 +55,8 @@ a 3-by-3 grid and the word HI.
 
 ## Running
 
-Run `Turtle.Main` in IntelliJ. Choose 1 to type your own commands (you can type
-`5,12` or `5 12`) or 2 to see the sample drawings.
+Run `Turtle.Main` in IntelliJ. Choose 1 to type your own commands or 2 to see
+the sample drawings. When you type command 5 or 10, the program asks for the
+number of steps; for command 8 it asks for the row and the column.
 
 Run the tests with `mvn test`, or from IntelliJ.
