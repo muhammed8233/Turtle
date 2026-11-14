@@ -22,34 +22,30 @@ public class Turtle {
         }
     }
 
-    // moves the turtle forward; while the pen is down, the starting cell and
-    // every cell the turtle walks onto are set to 1; the turtle stops at the wall
+    // moves the turtle forward one cell at a time; while the pen is down,
+    // the starting cell and every cell the turtle walks onto are set to 1;
+    // the turtle stops at the edge of the floor
     public SketchPad moveTurtle(int steps){
-        int rowStep = 0;
-        int columnStep = 0;
-
-        if (direction == Direction.NORTH) {
-            rowStep = -1;
-        } else if (direction == Direction.SOUTH) {
-            rowStep = 1;
-        } else if (direction == Direction.EAST) {
-            columnStep = 1;
-        } else if (direction == Direction.WEST) {
-            columnStep = -1;
-        }
+        int lastCell = sketchPad.floor.length - 1;
 
         if (pen == Pen.DOWN) {
             sketchPad.floor[newRow][newColumn] = 1;
         }
 
-        int count = 0;
-        while (count < steps && isOnFloor(newRow + rowStep, newColumn + columnStep)) {
-            newRow = newRow + rowStep;
-            newColumn = newColumn + columnStep;
+        for (int i = 0; i < steps; i++) {
+            if (direction == Direction.EAST && newColumn < lastCell) {
+                newColumn++;
+            } else if (direction == Direction.WEST && newColumn > 0) {
+                newColumn--;
+            } else if (direction == Direction.SOUTH && newRow < lastCell) {
+                newRow++;
+            } else if (direction == Direction.NORTH && newRow > 0) {
+                newRow--;
+            }
+
             if (pen == Pen.DOWN) {
                 sketchPad.floor[newRow][newColumn] = 1;
             }
-            count++;
         }
         return sketchPad;
     }
