@@ -1,0 +1,9 @@
+# The same 12-by-12 square, written with the repeat command.
+2
+12,4
+  5,12
+  3
+13
+1
+6
+9

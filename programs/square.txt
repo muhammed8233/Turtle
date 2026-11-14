@@ -1,0 +1,13 @@
+# The 12-by-12 square from the exercise. The turtle starts near the
+# centre of the floor (row 4, column 4) facing east, with the pen up.
+2
+5,12
+3
+5,12
+3
+5,12
+3
+5,12
+1
+6
+9
