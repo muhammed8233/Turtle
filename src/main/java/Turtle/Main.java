@@ -1,209 +1,201 @@
 package Turtle;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-/**
- * Reads turtle graphics commands and tells the turtle what to do.
- *
- * <pre>
- *   1        pen up
- *   2        pen down
- *   3        turn right
- *   4        turn left
- *   5,n      move forward n steps
- *   6        display the floor
- *   9        end of program
- *
- *   Extra commands
- *   7        clear the floor
- *   8,r,c    jump to row r, column c without drawing
- *   10,n     move backward n steps
- *   12,n     repeat the commands up to the matching 13, n times
- *   13       end of repeat
- *   14       show where the turtle is
- *   #        everything after it is a comment
- * </pre>
- *
- * Run with no arguments to type commands, or pass program files to run them.
- */
+// Turtle graphics: reads commands and tells the turtle what to do.
+//
+//   1        pen up
+//   2        pen down
+//   3        turn right
+//   4        turn left
+//   5,n      move forward n steps
+//   6        display the floor
+//   9        end of program
+//
+// Extra commands
+//   7        clear the floor
+//   8,r,c    jump to row r, column c without drawing
+//   10,n     move backward n steps
+//   14       show where the turtle is
 public class Main {
-    /** Near the centre of the 20-by-20 floor, so the 12-by-12 square fits and is centred. */
+    // near the centre of the 20-by-20 floor, so the 12-by-12 square fits
     public static final int START_ROW = 4;
     public static final int START_COLUMN = 4;
 
-    private final Turtle turtle = new Turtle(START_ROW, START_COLUMN);
-    private boolean finished;
-    private int repeatDepth;
-    private int repeatCount;
-    private final List<String> repeatCommands = new ArrayList<>();
+    // The 12-by-12 square from the exercise
+    public static final int[] SQUARE = {
+            2, 5,12, 3, 5,12, 3, 5,12, 3, 5,12, 1, 6, 9
+    };
 
-    public Turtle getTurtle() {
-        return turtle;
+    // Five squares, one inside the other
+    public static final int[] NESTED_SQUARES = {
+            8,0,0, 2, 5,19, 3, 5,19, 3, 5,19, 3, 5,19, 3, 1, 8,2,2, 2, 5,15, 3,
+            5,15, 3, 5,15, 3, 5,15, 3, 1, 8,4,4, 2, 5,11, 3, 5,11, 3, 5,11, 3,
+            5,11, 3, 1, 8,6,6, 2, 5,7, 3, 5,7, 3, 5,7, 3, 5,7, 3, 1, 8,8,8, 2,
+            5,3, 3, 5,3, 3, 5,3, 3, 5,3, 3, 1, 6, 9
+    };
+
+    // A square spiral
+    public static final int[] SPIRAL = {
+            8,0,0, 2, 5,19, 3, 5,19, 3, 5,19, 3, 5,17, 3, 5,17, 3, 5,15, 3, 5,15,
+            3, 5,13, 3, 5,13, 3, 5,11, 3, 5,11, 3, 5,9, 3, 5,9, 3, 5,7, 3, 5,7,
+            3, 5,5, 3, 5,5, 3, 5,3, 3, 5,3, 3, 5,1, 1, 6, 9
+    };
+
+    // A staircase from the bottom-left corner to the top-right
+    public static final int[] STAIRCASE = {
+            8,19,0, 2, 5,3, 4, 5,3, 3, 5,3, 4, 5,3, 3, 5,3, 4, 5,3, 3, 5,3, 4,
+            5,3, 3, 5,3, 4, 5,3, 3, 5,3, 4, 5,3, 3, 5,1, 1, 6, 9
+    };
+
+    // A 3-by-3 grid, drawn with the backward command
+    public static final int[] GRID = {
+            8,0,0, 2, 5,18, 10,18, 1, 3, 5,6, 4, 2, 5,18, 10,18, 1, 3, 5,6, 4, 2,
+            5,18, 10,18, 1, 3, 5,6, 4, 2, 5,18, 1, 8,0,0, 3, 2, 5,18, 10,18, 1,
+            4, 5,6, 3, 2, 5,18, 10,18, 1, 4, 5,6, 3, 2, 5,18, 10,18, 1, 4, 5,6,
+            3, 2, 5,18, 1, 6, 9
+    };
+
+    // The word HI
+    public static final int[] HI = {
+            8,4,2, 3, 2, 5,10, 1, 8,9,2, 4, 2, 5,5, 1, 8,4,7, 3, 2, 5,10, 1,
+            8,4,11, 4, 2, 5,6, 1, 8,14,11, 2, 5,6, 1, 8,4,14, 3, 2, 5,10, 1, 6,
+            9
+    };
+
+    public static final int[][] PROGRAMS = {SQUARE, NESTED_SQUARES, SPIRAL, STAIRCASE, GRID, HI};
+    public static final String[] PROGRAM_NAMES = {
+            "Square", "Nested squares", "Spiral", "Staircase", "Grid", "HI"
+    };
+
+    // how many numbers come after a command: 5 and 10 need steps, 8 needs a row and a column
+    public static int numbersNeeded(int command) {
+        if (command == 5 || command == 10) {
+            return 1;
+        } else if (command == 8) {
+            return 2;
+        }
+        return 0;
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void runProgram(List<String> commands) {
-        for (String command : commands) {
-            if (!runCommand(command)) {
-                return;
+    // runs the commands in the array until command 9 or the end of the array;
+    // returns true if the program ended with command 9
+    public static boolean runCommands(Turtle turtle, int[] commands) {
+        int index = 0;
+        while (index < commands.length) {
+            int command = commands[index];
+            int needed = numbersNeeded(command);
+            if (index + needed >= commands.length) {
+                System.out.println("Command " + command + " is missing its numbers.");
+                return false;
             }
+
+            if (command == 9) {
+                return true;
+            } else if (needed == 0) {
+                runCommand(turtle, command, 0, 0);
+            } else if (needed == 1) {
+                runCommand(turtle, command, commands[index + 1], 0);
+            } else {
+                runCommand(turtle, command, commands[index + 1], commands[index + 2]);
+            }
+            index = index + 1 + needed;
         }
-        if (repeatDepth > 0) {
-            System.out.println("Missing 13: a repeat was never closed.");
-            repeatDepth = 0;
-            repeatCommands.clear();
-        }
+        return false;
     }
 
-    /** Runs one command. Returns false once the program has ended. */
-    public boolean runCommand(String command) {
-        if (finished) {
-            return false;
-        }
-        int comment = command.indexOf('#');
-        if (comment >= 0) {
-            command = command.substring(0, comment);
-        }
-        command = command.trim();
-        if (command.isEmpty()) {
-            return true;
-        }
-
-        int[] values;
-        try {
-            String[] parts = command.split("\\s*,\\s*", -1);
-            values = new int[parts.length];
-            for (int i = 0; i < parts.length; i++) {
-                values[i] = Integer.parseInt(parts[i].trim());
+    // carries out one command; first and second are the numbers that go with it
+    public static void runCommand(Turtle turtle, int command, int first, int second) {
+        if (command == 1) {
+            turtle.changePenStatus(Pen.UP);
+        } else if (command == 2) {
+            turtle.changePenStatus(Pen.DOWN);
+        } else if (command == 3 || command == 4) {
+            turtle.changeDirection(command);
+        } else if (command == 5) {
+            move(turtle, first);
+        } else if (command == 6) {
+            turtle.turtleFloor();
+        } else if (command == 7) {
+            turtle.clearFloor();
+        } else if (command == 8) {
+            if (!turtle.jumpTurtle(first, second)) {
+                System.out.println("Cannot jump to row " + first + ", column " + second
+                        + ": it is not on the floor.");
             }
-        } catch (NumberFormatException e) {
+        } else if (command == 10) {
+            turtle.changeDirectionToRight();
+            turtle.changeDirectionToRight();
+            move(turtle, first);
+            turtle.changeDirectionToRight();
+            turtle.changeDirectionToRight();
+        } else if (command == 14) {
+            System.out.println("Turtle at row " + turtle.getNewRow() + ", column " + turtle.getNewColumn()
+                    + ", facing " + turtle.getDirection() + ", pen " + turtle.getPen());
+        } else if (command != 9) {
             System.out.println("Unknown command: " + command);
-            return true;
         }
-
-        if (repeatDepth > 0) {
-            collectRepeat(values[0], command);
-            return !finished;
-        }
-
-        switch (values[0]) {
-            case 1 -> turtle.changePenStatus(Pen.UP);
-            case 2 -> turtle.changePenStatus(Pen.DOWN);
-            case 3, 4 -> turtle.changeDirection(values[0]);
-            case 5 -> move(values, command, false);
-            case 6 -> turtle.turtleFloor();
-            case 7 -> turtle.getSketchPad().floor = new int[20][20];
-            case 8 -> jump(values, command);
-            case 9 -> finished = true;
-            case 10 -> move(values, command, true);
-            case 12 -> startRepeat(values, command);
-            case 13 -> System.out.println("13 without a matching 12,n");
-            case 14 -> System.out.println("Turtle at row " + turtle.getNewRow()
-                    + ", column " + turtle.getNewColumn()
-                    + ", facing " + turtle.getDirection()
-                    + ", pen " + turtle.getPen());
-            default -> System.out.println("Unknown command: " + command);
-        }
-        return !finished;
     }
 
-    private void move(int[] values, String command, boolean backward) {
-        if (values.length != 2) {
-            System.out.println("Move needs a number of steps, e.g. " + values[0] + ",10: " + command);
-            return;
-        }
-        int steps = values[1];
+    // moves the turtle and says so if it hit the wall before finishing
+    private static void move(Turtle turtle, int steps) {
         if (steps < 0) {
-            System.out.println("Number of steps cannot be negative: " + command);
+            System.out.println("Number of steps cannot be negative: " + steps);
             return;
-        }
-        if (backward) {
-            turtle.changeDirectionToRight();
-            turtle.changeDirectionToRight();
         }
         int startRow = turtle.getNewRow();
         int startColumn = turtle.getNewColumn();
         turtle.moveTurtle(steps);
         int stepsTaken = Math.abs(turtle.getNewRow() - startRow) + Math.abs(turtle.getNewColumn() - startColumn);
-        if (backward) {
-            turtle.changeDirectionToRight();
-            turtle.changeDirectionToRight();
-        }
         if (stepsTaken < steps) {
             System.out.println("Hit the wall after " + stepsTaken + " of " + steps + " steps.");
         }
     }
 
-    private void jump(int[] values, String command) {
-        if (values.length != 3) {
-            System.out.println("Jump needs a row and a column, e.g. 8,10,10: " + command);
-        } else if (!turtle.isOnFloor(values[1], values[2])) {
-            System.out.println("Cannot jump outside the floor: " + command);
-        } else {
-            turtle.jumpTurtle(values[1], values[2]);
-        }
-    }
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        // let the user type "5,12" as well as "5 12"
+        input.useDelimiter("[,\\s]+");
 
-    private void startRepeat(int[] values, String command) {
-        if (values.length != 2 || values[1] < 0) {
-            System.out.println("Repeat needs a count of zero or more, e.g. 12,4: " + command);
-            return;
-        }
-        repeatDepth = 1;
-        repeatCount = values[1];
-        repeatCommands.clear();
-    }
+        System.out.println("Turtle graphics");
+        System.out.println("  1 = type your own commands");
+        System.out.println("  2 = see the sample drawings");
+        System.out.print("Choose 1 or 2: ");
+        int choice = input.hasNextInt() ? input.nextInt() : 1;
 
-    private void collectRepeat(int code, String command) {
-        if (code == 12) {
-            repeatDepth++;
-        } else if (code == 13) {
-            repeatDepth--;
-        }
-        if (repeatDepth > 0) {
-            repeatCommands.add(command);
-            return;
-        }
-        List<String> commands = new ArrayList<>(repeatCommands);
-        int times = repeatCount;
-        repeatCommands.clear();
-        for (int i = 0; i < times && !finished; i++) {
-            for (String repeated : commands) {
-                if (!runCommand(repeated)) {
-                    break;
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        if (args.length > 0) {
-            for (String file : args) {
-                System.out.println("=== " + file);
-                new Main().runProgram(Files.readAllLines(Path.of(file)));
+        if (choice == 2) {
+            for (int i = 0; i < PROGRAMS.length; i++) {
+                System.out.println(PROGRAM_NAMES[i]);
+                runCommands(new Turtle(START_ROW, START_COLUMN), PROGRAMS[i]);
+                System.out.println();
             }
             return;
         }
-        Main program = new Main();
-        System.out.println("Turtle graphics. The turtle starts at row 4, column 4, facing east, pen up.");
+
+        Turtle turtle = new Turtle(START_ROW, START_COLUMN);
+        System.out.println("The turtle starts at row " + START_ROW + ", column " + START_COLUMN
+                + ", facing east, pen up.");
         System.out.println("  1 = pen up, 2 = pen down, 3 = turn right, 4 = turn left,");
-        System.out.println("  5,n = forward n, 6 = display, 9 = end, 7 = clear floor,");
-        System.out.println("  8,r,c = jump to row r column c, 10,n = back n,");
-        System.out.println("  12,n ... 13 = repeat n times, 14 = show turtle, # = comment");
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.print("> ");
-            if (!scanner.hasNextLine() || !program.runCommand(scanner.nextLine())) {
+        System.out.println("  5,n = forward n, 6 = display, 9 = end,");
+        System.out.println("  7 = clear, 8,r,c = jump to row r column c, 10,n = back n, 14 = where am I");
+
+        int command = 0;
+        while (command != 9) {
+            System.out.print("Enter a command: ");
+            if (!input.hasNextInt()) {
                 break;
             }
+            command = input.nextInt();
+            int first = 0;
+            int second = 0;
+            int needed = numbersNeeded(command);
+            if (needed >= 1 && input.hasNextInt()) {
+                first = input.nextInt();
+            }
+            if (needed == 2 && input.hasNextInt()) {
+                second = input.nextInt();
+            }
+            runCommand(turtle, command, first, second);
         }
     }
 }

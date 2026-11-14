@@ -7,6 +7,10 @@ an asterisk for every 1 and a blank for every 0.
 The turtle starts near the centre of the floor (row 4, column 4), facing east,
 with its pen up, so the 12-by-12 square from the exercise fits and is centred.
 
+The code only uses what Deitel's *Java How to Program* covers in chapters 1–7:
+classes and objects, `Scanner` input, `if`/`else`, `while` and `for` loops,
+`static` methods and arrays.
+
 ## Commands
 
 | Command | Meaning |
@@ -21,24 +25,23 @@ with its pen up, so the 12-by-12 square from the exercise fits and is centred.
 | `7` | clear the floor *(extra)* |
 | `8,r,c` | jump to row r, column c without drawing *(extra)* |
 | `10,n` | move backward n steps without turning *(extra)* |
-| `12,n` … `13` | repeat the commands in between n times; repeats can be nested *(extra)* |
 | `14` | show where the turtle is and which way it faces *(extra)* |
 
-Blank lines and anything after `#` are ignored, so programs can have comments.
 The turtle stops at the wall instead of walking off the floor.
 
-## Example programs
+## Sample drawings
 
-The `programs` folder has turtle programs that draw:
+`Main` stores each turtle program as an array of commands, for example the
+square from the exercise:
 
-- `square.txt`: the 12-by-12 square from the exercise
-- `square-repeat.txt`: the same square, using repeat
-- `nested-squares.txt`: five squares inside each other
-- `spiral.txt`: a square spiral
-- `staircase.txt`: a staircase
-- `grid.txt`: a 3-by-3 grid
-- `checkerboard.txt`: a 5-by-5 checkerboard
-- `hi.txt`: the word HI
+```java
+public static final int[] SQUARE = {
+        2, 5,12, 3, 5,12, 3, 5,12, 3, 5,12, 1, 6, 9
+};
+```
+
+The samples are: the 12-by-12 square, nested squares, a spiral, a staircase,
+a 3-by-3 grid and the word HI.
 
 ## Classes
 
@@ -46,15 +49,13 @@ The `programs` folder has turtle programs that draw:
 - `SketchPad` holds the 20-by-20 `floor`.
 - `Turtle` keeps its pen, direction, position (`newRow`, `newColumn`) and its
   sketch pad. It turns (`changeDirectionToRight`, `changeDirectionToLeft`,
-  `changeDirection`), changes its pen (`changePenStatus`), moves (`moveTurtle`)
-  and displays the floor (`turtleFloor`).
+  `changeDirection`), changes its pen (`changePenStatus`), moves (`moveTurtle`,
+  `jumpTurtle`), clears the floor (`clearFloor`) and displays it (`turtleFloor`).
 - `Main` reads the commands and tells the turtle what to do.
 
 ## Running
 
-Open the project in IntelliJ and run `Turtle.Main`. Pass program files as
-program arguments (for example `programs/square.txt`) to run them, or run it
-with no arguments to type commands.
+Run `Turtle.Main` in IntelliJ. Choose 1 to type your own commands (you can type
+`5,12` or `5 12`) or 2 to see the sample drawings.
 
-Run the tests with `mvn test`, or from IntelliJ. They use JUnit 5; run them from
-the project folder so `MainTest` can find the `programs` folder.
+Run the tests with `mvn test`, or from IntelliJ.

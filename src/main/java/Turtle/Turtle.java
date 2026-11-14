@@ -8,31 +8,26 @@ public class Turtle {
 
     private int currentDirection = 0;
 
-    private final SketchPad sketchPad = new SketchPad();
+    private SketchPad sketchPad = new SketchPad();
 
-    /** A turtle in the top-left corner, facing east, with its pen up. */
+    // a turtle in the top-left corner, facing east, with its pen up
     public Turtle() {
     }
 
-    /** A turtle at the given row and column, facing east, with its pen up. */
-    public Turtle(int newRow, int newColumn) {
-        if (newRow < 0 || newRow >= sketchPad.floor.length || newColumn < 0 || newColumn >= sketchPad.floor.length) {
-            throw new IllegalArgumentException("Cell " + newRow + "," + newColumn + " is not on the floor");
+    // a turtle at the given row and column, facing east, with its pen up
+    public Turtle(int row, int column) {
+        if (row >= 0 && row < sketchPad.floor.length && column >= 0 && column < sketchPad.floor.length) {
+            newRow = row;
+            newColumn = column;
         }
-        this.newRow = newRow;
-        this.newColumn = newColumn;
     }
 
-    /**
-     * Moves the turtle forward. While the pen is down, the starting cell and every
-     * cell it walks onto are set to 1. The turtle stops at the edge of the floor.
-     */
+    // moves the turtle forward; while the pen is down, the starting cell and
+    // every cell the turtle walks onto are set to 1; the turtle stops at the wall
     public SketchPad moveTurtle(int steps){
-        if (steps < 0) {
-            throw new IllegalArgumentException("Number of steps cannot be negative: " + steps);
-        }
         int rowStep = 0;
         int columnStep = 0;
+
         if (direction == Direction.NORTH) {
             rowStep = -1;
         } else if (direction == Direction.SOUTH) {
@@ -46,33 +41,33 @@ public class Turtle {
         if (pen == Pen.DOWN) {
             sketchPad.floor[newRow][newColumn] = 1;
         }
-        for (int i = 0; i < steps; i++) {
-            int nextRow = newRow + rowStep;
-            int nextColumn = newColumn + columnStep;
-            if (!isOnFloor(nextRow, nextColumn)) {
-                break;
-            }
-            newRow = nextRow;
-            newColumn = nextColumn;
+
+        int count = 0;
+        while (count < steps && isOnFloor(newRow + rowStep, newColumn + columnStep)) {
+            newRow = newRow + rowStep;
+            newColumn = newColumn + columnStep;
             if (pen == Pen.DOWN) {
                 sketchPad.floor[newRow][newColumn] = 1;
             }
+            count++;
         }
         return sketchPad;
     }
 
-    /** Lifts the turtle to another cell without drawing. */
-    public void jumpTurtle(int row, int column) {
-        if (!isOnFloor(row, column)) {
-            throw new IllegalArgumentException("Cell " + row + "," + column + " is not on the floor");
+    // lifts the turtle to another cell without drawing;
+    // returns false and stays put if the cell is not on the floor
+    public boolean jumpTurtle(int row, int column) {
+        if (isOnFloor(row, column)) {
+            newRow = row;
+            newColumn = column;
+            return true;
         }
-        newRow = row;
-        newColumn = column;
+        return false;
     }
 
     public boolean isOnFloor(int row, int column) {
         return row >= 0 && row < sketchPad.floor.length
-                && column >= 0 && column < sketchPad.floor[row].length;
+                && column >= 0 && column < sketchPad.floor.length;
     }
 
     public Direction changeDirectionToRight(){
@@ -105,16 +100,16 @@ public class Turtle {
         return direction;
     }
 
-    /** 3 turns right and 4 turns left, like the turtle commands. Returns the command used. */
+    // 3 turns right and 4 turns left, like the turtle commands;
+    // returns the last direction command that was used
     public int changeDirection(int value){
         if (value == 3) {
             changeDirectionToRight();
+            currentDirection = value;
         } else if (value == 4) {
             changeDirectionToLeft();
-        } else {
-            throw new IllegalArgumentException("Direction must be 3 (right) or 4 (left): " + value);
+            currentDirection = value;
         }
-        currentDirection = value;
         return currentDirection;
     }
 
@@ -127,6 +122,11 @@ public class Turtle {
 
         }
         return pen;
+    }
+
+    // sets every cell of the floor back to 0
+    public void clearFloor() {
+        sketchPad = new SketchPad();
     }
 
     public Pen getPen() {
@@ -149,17 +149,32 @@ public class Turtle {
         return sketchPad;
     }
 
-    /** Displays the floor: an asterisk wherever there is a 1, a blank wherever there is a 0. */
-    public void turtleFloor(){
-        System.out.println("+" + "--".repeat(sketchPad.floor.length) + "+");
-        for (int[] row : sketchPad.floor) {
-            System.out.print("|");
-            for (int column : row) {
-                System.out.print(column == 1 ? "* " : "  ");
-            }
-            System.out.println("|");
+    // builds the picture of the floor: an asterisk wherever there is a 1
+    // and a blank wherever there is a 0, inside a border
+    public String floorDisplay() {
+        String border = "+";
+        for (int i = 0; i < sketchPad.floor.length; i++) {
+            border = border + "--";
         }
-        System.out.println("+" + "--".repeat(sketchPad.floor.length) + "+");
+        border = border + "+\n";
+
+        String display = border;
+        for (int[] row : sketchPad.floor) {
+            display = display + "|";
+            for (int column : row) {
+                if (column == 1) {
+                    display = display + "* ";
+                } else {
+                    display = display + "  ";
+                }
+            }
+            display = display + "|\n";
+        }
+        return display + border;
+    }
+
+    public void turtleFloor(){
+        System.out.print(floorDisplay());
     }
 
 }
