@@ -63,10 +63,12 @@ public class Main {
             9
     };
 
-    public static final int[][] PROGRAMS = {SQUARE, NESTED_SQUARES, SPIRAL, STAIRCASE, GRID, HI};
-    public static final String[] PROGRAM_NAMES = {
-            "Square", "Nested squares", "Spiral", "Staircase", "Grid", "HI"
-    };
+    // prints the name of a sample drawing, then draws it with a new turtle
+    public static void drawSample(String name, int[] commands) {
+        System.out.println(name);
+        runCommands(new Turtle(START_ROW, START_COLUMN), commands);
+        System.out.println();
+    }
 
     // how many numbers come after a command: 5 and 10 need steps, 8 needs a row and a column
     public static int numbersNeeded(int command) {
@@ -164,11 +166,12 @@ public class Main {
         int choice = input.hasNextInt() ? input.nextInt() : 1;
 
         if (choice == 2) {
-            for (int i = 0; i < PROGRAMS.length; i++) {
-                System.out.println(PROGRAM_NAMES[i]);
-                runCommands(new Turtle(START_ROW, START_COLUMN), PROGRAMS[i]);
-                System.out.println();
-            }
+            drawSample("Square", SQUARE);
+            drawSample("Nested squares", NESTED_SQUARES);
+            drawSample("Spiral", SPIRAL);
+            drawSample("Staircase", STAIRCASE);
+            drawSample("Grid", GRID);
+            drawSample("HI", HI);
             return;
         }
 

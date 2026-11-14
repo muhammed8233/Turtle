@@ -128,14 +128,21 @@ class MainTest {
         assertEquals(5, turtle.getNewColumn());
     }
 
+    // runs a sample program and checks that it draws something and ends with 9
+    private void assertSampleDraws(int[] program) {
+        Turtle turtle = new Turtle(Main.START_ROW, Main.START_COLUMN);
+        assertTrue(Main.runCommands(turtle, program));
+        assertTrue(countOnes(turtle.getSketchPad().floor) > 0);
+    }
+
     @Test
     void everySampleProgramDrawsSomethingAndEndsWithNine() {
-        assertEquals(Main.PROGRAMS.length, Main.PROGRAM_NAMES.length);
-        for (int i = 0; i < Main.PROGRAMS.length; i++) {
-            Turtle turtle = new Turtle(Main.START_ROW, Main.START_COLUMN);
-            assertTrue(Main.runCommands(turtle, Main.PROGRAMS[i]), Main.PROGRAM_NAMES[i]);
-            assertTrue(countOnes(turtle.getSketchPad().floor) > 0, Main.PROGRAM_NAMES[i]);
-        }
+        assertSampleDraws(Main.SQUARE);
+        assertSampleDraws(Main.NESTED_SQUARES);
+        assertSampleDraws(Main.SPIRAL);
+        assertSampleDraws(Main.STAIRCASE);
+        assertSampleDraws(Main.GRID);
+        assertSampleDraws(Main.HI);
     }
 
     @Test
