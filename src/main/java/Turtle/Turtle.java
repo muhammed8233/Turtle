@@ -1,153 +1,99 @@
 package Turtle;
 
 public class Turtle {
-    private Pen pen = Pen.UP;
-    private Direction direction = Direction.EAST;
-    private int newRow = 0;
-    private int newColumn = 0;
+    private Pen pen = new Pen();
+    private Location location = new Location();
+    private DIRECTION direction = DIRECTION.NORTH;
 
-    private int currentDirection = 0;
-
-    private final SketchPad sketchPad = new SketchPad();
-
-    // a turtle in the top-left corner, facing east, with its pen up
-    public Turtle() {
+    public Pen getPen() {
+        return this.pen;
     }
 
-    // a turtle at the given row and column, facing east, with its pen up
-    public Turtle(int row, int column) {
-        if (sketchPad.isOnFloor(row, column)) {
-            newRow = row;
-            newColumn = column;
+    // 1 raises the pen, 2 puts it down
+    public void changePenPosition(int positionValue) {
+        if (positionValue == 1){
+            pen.raiseUp();
+        } else if (positionValue == 2) {
+            pen.putDown();
         }
+    }
+    public void setPen(Pen pen){
+        this.pen = pen;
+    }
+
+    // turns a quarter turn to the left of the way the turtle is facing
+    public void turnLeft() {
+        if (direction == DIRECTION.NORTH) {
+            direction = DIRECTION.WEST;
+        } else if (direction == DIRECTION.WEST) {
+            direction = DIRECTION.SOUTH;
+        } else if (direction == DIRECTION.SOUTH) {
+            direction = DIRECTION.EAST;
+        } else if (direction == DIRECTION.EAST) {
+            direction = DIRECTION.NORTH;
+        }
+    }
+    // turns a quarter turn to the right of the way the turtle is facing
+    public void turnRight() {
+        if (direction == DIRECTION.NORTH) {
+            direction = DIRECTION.EAST;
+        } else if (direction == DIRECTION.EAST) {
+            direction = DIRECTION.SOUTH;
+        } else if (direction == DIRECTION.SOUTH) {
+            direction = DIRECTION.WEST;
+        } else if (direction == DIRECTION.WEST) {
+            direction = DIRECTION.NORTH;
+        }
+    }
+    public void turnUp() {
+        this.direction = DIRECTION.NORTH;
+    }
+    public void turnDown() {
+        this.direction = DIRECTION.SOUTH;
+    }
+
+    public DIRECTION getDirection() {
+        return direction;
+    }
+    public void setLocation(Location location){
+        this.location = location;
+    }
+
+    public Location getLocation(){
+        return this.location;
     }
 
     // moves the turtle forward one cell at a time; while the pen is down,
-    // the starting cell and every cell the turtle walks onto are set to 1;
+    // the starting cell and every cell the turtle walks onto get an asterisk;
     // the turtle stops at the edge of the floor
-    public SketchPad moveTurtle(int steps){
-        int lastCell = sketchPad.lastCell();
+    public char[][] move(int numberOfSteps, Room room) {
+        char[][]floor = room.getFloor();
+        int lastCell = floor.length - 1;
+        int row = location.getRow();
+        int col = location.getCol();
 
-        if (pen == Pen.DOWN) {
-            sketchPad.markCell(newRow, newColumn);
+        if (pen.penPosition() == PEN_POSITION.DOWN) {
+            floor[row][col] = '*';
         }
 
-        for (int i = 0; i < steps; i++) {
-            if (direction == Direction.EAST && newColumn < lastCell) {
-                newColumn++;
-            } else if (direction == Direction.WEST && newColumn > 0) {
-                newColumn--;
-            } else if (direction == Direction.SOUTH && newRow < lastCell) {
-                newRow++;
-            } else if (direction == Direction.NORTH && newRow > 0) {
-                newRow--;
+        for (int i = 0; i < numberOfSteps; i++) {
+            if (direction == DIRECTION.EAST && col < lastCell) {
+                col++;
+            } else if (direction == DIRECTION.WEST && col > 0) {
+                col--;
+            } else if (direction == DIRECTION.SOUTH && row < lastCell) {
+                row++;
+            } else if (direction == DIRECTION.NORTH && row > 0) {
+                row--;
             }
 
-            if (pen == Pen.DOWN) {
-                sketchPad.markCell(newRow, newColumn);
+            if (pen.penPosition() == PEN_POSITION.DOWN) {
+                floor[row][col] = '*';
             }
         }
-        return sketchPad;
+
+        location.setRow(row);
+        location.setCol(col);
+        return floor;
     }
-
-    // lifts the turtle to another cell without drawing;
-    // returns false and stays put if the cell is not on the floor
-    public boolean jumpTurtle(int row, int column) {
-        if (sketchPad.isOnFloor(row, column)) {
-            newRow = row;
-            newColumn = column;
-            return true;
-        }
-        return false;
-    }
-
-    public Direction changeDirectionToRight(){
-        if(direction == Direction.NORTH){
-            direction = Direction.EAST;
-        }else if (direction == Direction.SOUTH) {
-            direction = Direction.WEST;
-
-        }else if (direction == Direction.EAST) {
-            direction = Direction.SOUTH;
-
-        }else if (direction == Direction.WEST) {
-            direction = Direction.NORTH;
-        }
-        return direction;
-    }
-
-    public Direction changeDirectionToLeft(){
-        if(direction == Direction.EAST){
-            direction = Direction.NORTH;
-        }else if (direction == Direction.WEST) {
-            direction = Direction.SOUTH;
-
-        }else if (direction == Direction.SOUTH) {
-            direction = Direction.EAST;
-
-        }else if (direction == Direction.NORTH ) {
-            direction = Direction.WEST;
-        }
-        return direction;
-    }
-
-    // 3 turns right and 4 turns left, like the turtle commands;
-    // returns the last direction command that was used
-    public int changeDirection(int value){
-        if (value == 3) {
-            changeDirectionToRight();
-            currentDirection = value;
-        } else if (value == 4) {
-            changeDirectionToLeft();
-            currentDirection = value;
-        }
-        return currentDirection;
-    }
-
-    public Pen changePenStatus(Pen value){
-        if (value == Pen.UP){
-           pen = Pen.UP;
-
-        }else if(value == Pen.DOWN){
-            pen = Pen.DOWN;
-
-        }
-        return pen;
-    }
-
-    // asks the sketch pad to set every cell back to 0
-    public void clearFloor() {
-        sketchPad.clearFloor();
-    }
-
-    public Pen getPen() {
-        return pen;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public int getNewRow() {
-        return newRow;
-    }
-
-    public int getNewColumn() {
-        return newColumn;
-    }
-
-    public SketchPad getSketchPad() {
-        return sketchPad;
-    }
-
-    // the picture of the floor, built by the sketch pad
-    public String floorDisplay() {
-        return sketchPad.floorDisplay();
-    }
-
-    // displays the floor (command 6)
-    public void turtleFloor(){
-        sketchPad.printFloor();
-    }
-
 }

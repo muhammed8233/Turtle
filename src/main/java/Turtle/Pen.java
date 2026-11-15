@@ -1,7 +1,17 @@
 package Turtle;
 
-// The two positions of the turtle's pen: UP moves without drawing, DOWN draws.
-public enum Pen {
-    UP,
-    DOWN
+public class Pen {
+    private PEN_POSITION penPosition = PEN_POSITION.UP;
+
+    public PEN_POSITION raiseUp() {
+        return penPosition = PEN_POSITION.UP;
+    }
+
+    public PEN_POSITION putDown() {
+        return penPosition = PEN_POSITION.DOWN;
+    }
+
+    public PEN_POSITION penPosition() {
+        return penPosition;
+    }
 }
