@@ -31,7 +31,7 @@ The turtle stops at the wall instead of walking off the floor.
 
 ## Sample drawings
 
-`Main` stores each turtle program as an array of commands, for example the
+`SampleDrawings` stores each turtle program as an array of commands, for example the
 square from the exercise:
 
 ```java
@@ -55,7 +55,11 @@ a 3-by-3 grid and the word HI.
   `changeDirectionToLeft`, `changeDirection`), changes its pen (`changePenStatus`)
   and moves (`moveTurtle`, `jumpTurtle`), asking its sketch pad to mark the cells
   it walks over.
-- `Main` reads the commands and tells the turtle what to do.
+- `TurtleCommands` carries out the commands: `runCommand` does one command and
+  `runCommands` runs a whole program stored in an array.
+- `SampleDrawings` holds the sample programs as arrays and draws them.
+- `Main` starts the program: it reads what you type with `Scanner` and passes
+  each command to `TurtleCommands`, or shows the sample drawings.
 
 ## Running
 
