@@ -3,6 +3,9 @@ package Turtle;
 // Turtle programs that draw shapes. Each program is an array of commands,
 // written the same way you would type them.
 public class SampleDrawings {
+    // near the centre of the 20-by-20 floor, so the 12-by-12 square fits
+    public static final int START_ROW = 4;
+    public static final int START_COLUMN = 4;
 
     // The 12-by-12 square from the exercise
     public static final int[] SQUARE = {
@@ -48,7 +51,7 @@ public class SampleDrawings {
     // prints the name of a drawing, then draws it with a new turtle
     public static void drawSample(String name, int[] commands) {
         System.out.println(name);
-        TurtleCommands.runCommands(new Turtle(Main.START_ROW, Main.START_COLUMN), commands);
+        TurtleCommands.runCommands(new Turtle(START_ROW, START_COLUMN), commands);
         System.out.println();
     }
 

@@ -58,13 +58,12 @@ a 3-by-3 grid and the word HI.
 - `TurtleCommands` carries out the commands: `runCommand` does one command and
   `runCommands` runs a whole program stored in an array.
 - `SampleDrawings` holds the sample programs as arrays and draws them.
-- `Main` starts the program: it reads what you type with `Scanner` and passes
-  each command to `TurtleCommands`, or shows the sample drawings.
+- `Main` is empty for now.
 
 ## Running
 
-Run `Turtle.Main` in IntelliJ. Choose 1 to type your own commands or 2 to see
-the sample drawings. When you type command 5 or 10, the program asks for the
-number of steps; for command 8 it asks for the row and the column.
+`Main` is empty for now. To see the drawings, call `SampleDrawings.drawAll()`
+from `main`, or run commands with `TurtleCommands.runCommand` and
+`TurtleCommands.runCommands`.
 
 Run the tests with `mvn test`, or from IntelliJ.
