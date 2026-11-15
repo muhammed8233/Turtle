@@ -8,7 +8,7 @@ public class Turtle {
 
     private int currentDirection = 0;
 
-    private SketchPad sketchPad = new SketchPad();
+    private final SketchPad sketchPad = new SketchPad();
 
     // a turtle in the top-left corner, facing east, with its pen up
     public Turtle() {
@@ -16,7 +16,7 @@ public class Turtle {
 
     // a turtle at the given row and column, facing east, with its pen up
     public Turtle(int row, int column) {
-        if (row >= 0 && row < sketchPad.floor.length && column >= 0 && column < sketchPad.floor.length) {
+        if (sketchPad.isOnFloor(row, column)) {
             newRow = row;
             newColumn = column;
         }
@@ -26,10 +26,10 @@ public class Turtle {
     // the starting cell and every cell the turtle walks onto are set to 1;
     // the turtle stops at the edge of the floor
     public SketchPad moveTurtle(int steps){
-        int lastCell = sketchPad.floor.length - 1;
+        int lastCell = sketchPad.lastCell();
 
         if (pen == Pen.DOWN) {
-            sketchPad.floor[newRow][newColumn] = 1;
+            sketchPad.markCell(newRow, newColumn);
         }
 
         for (int i = 0; i < steps; i++) {
@@ -44,7 +44,7 @@ public class Turtle {
             }
 
             if (pen == Pen.DOWN) {
-                sketchPad.floor[newRow][newColumn] = 1;
+                sketchPad.markCell(newRow, newColumn);
             }
         }
         return sketchPad;
@@ -53,17 +53,12 @@ public class Turtle {
     // lifts the turtle to another cell without drawing;
     // returns false and stays put if the cell is not on the floor
     public boolean jumpTurtle(int row, int column) {
-        if (isOnFloor(row, column)) {
+        if (sketchPad.isOnFloor(row, column)) {
             newRow = row;
             newColumn = column;
             return true;
         }
         return false;
-    }
-
-    public boolean isOnFloor(int row, int column) {
-        return row >= 0 && row < sketchPad.floor.length
-                && column >= 0 && column < sketchPad.floor.length;
     }
 
     public Direction changeDirectionToRight(){
@@ -120,9 +115,9 @@ public class Turtle {
         return pen;
     }
 
-    // sets every cell of the floor back to 0
+    // asks the sketch pad to set every cell back to 0
     public void clearFloor() {
-        sketchPad = new SketchPad();
+        sketchPad.clearFloor();
     }
 
     public Pen getPen() {
@@ -145,32 +140,14 @@ public class Turtle {
         return sketchPad;
     }
 
-    // builds the picture of the floor: an asterisk wherever there is a 1
-    // and a blank wherever there is a 0, inside a border
+    // the picture of the floor, built by the sketch pad
     public String floorDisplay() {
-        String border = "+";
-        for (int i = 0; i < sketchPad.floor.length; i++) {
-            border = border + "--";
-        }
-        border = border + "+\n";
-
-        String display = border;
-        for (int[] row : sketchPad.floor) {
-            display = display + "|";
-            for (int column : row) {
-                if (column == 1) {
-                    display = display + "* ";
-                } else {
-                    display = display + "  ";
-                }
-            }
-            display = display + "|\n";
-        }
-        return display + border;
+        return sketchPad.floorDisplay();
     }
 
+    // displays the floor (command 6)
     public void turtleFloor(){
-        System.out.print(floorDisplay());
+        sketchPad.printFloor();
     }
 
 }

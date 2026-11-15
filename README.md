@@ -46,11 +46,15 @@ a 3-by-3 grid and the word HI.
 ## Classes
 
 - `Pen` is `UP` or `DOWN`, and `Direction` is `NORTH`, `SOUTH`, `EAST` or `WEST`.
-- `SketchPad` holds the 20-by-20 `floor`.
-- `Turtle` keeps its pen, direction, position (`newRow`, `newColumn`) and its
-  sketch pad. It turns (`changeDirectionToRight`, `changeDirectionToLeft`,
-  `changeDirection`), changes its pen (`changePenStatus`), moves (`moveTurtle`,
-  `jumpTurtle`), clears the floor (`clearFloor`) and displays it (`turtleFloor`).
+- `SketchPad` is the floor. It holds the 20-by-20 `floor` array and does the
+  floor's jobs: checks whether a cell is on the floor (`isOnFloor`), sets a cell
+  to 1 (`markCell`), clears it (`clearFloor`) and builds and prints the picture
+  of it (`floorDisplay`, `printFloor`).
+- `Turtle` is the turtle. It keeps its pen, direction, position (`newRow`,
+  `newColumn`) and its sketch pad. It turns (`changeDirectionToRight`,
+  `changeDirectionToLeft`, `changeDirection`), changes its pen (`changePenStatus`)
+  and moves (`moveTurtle`, `jumpTurtle`), asking its sketch pad to mark the cells
+  it walks over.
 - `Main` reads the commands and tells the turtle what to do.
 
 ## Running
