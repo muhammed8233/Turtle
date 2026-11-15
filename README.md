@@ -1,47 +1,26 @@
 # Turtle Graphics
 
 A turtle walks around a 20-by-20 floor (an `int` array of 0s and 1s). Wherever it
-walks with its pen down, the floor is set to 1. Command 6 displays the floor:
-an asterisk for every 1 and a blank for every 0.
-
-The turtle starts near the centre of the floor (row 4, column 4), facing east,
-with its pen up, so the 12-by-12 square from the exercise fits and is centred.
+walks with its pen down, the floor is set to 1. Displaying the floor shows an
+asterisk for every 1 and a blank for every 0.
 
 The code only uses what Deitel's *Java How to Program* covers in chapters 1–7:
-classes and objects, `Scanner` input, `if`/`else`, `while` and `for` loops,
-`static` methods and arrays.
+classes and objects, `if`/`else`, `while` and `for` loops, methods and arrays.
 
-## Commands
+## Turtle methods for each command
 
-| Command | Meaning |
+| Command | Method |
 |---|---|
-| `1` | pen up |
-| `2` | pen down |
-| `3` | turn right |
-| `4` | turn left |
-| `5,n` | move forward n steps |
-| `6` | display the floor |
-| `9` | end of program |
-| `7` | clear the floor *(extra)* |
-| `8,r,c` | jump to row r, column c without drawing *(extra)* |
-| `10,n` | move backward n steps without turning *(extra)* |
-| `14` | show where the turtle is and which way it faces *(extra)* |
+| `1` pen up | `turtle.changePenStatus(Pen.UP)` |
+| `2` pen down | `turtle.changePenStatus(Pen.DOWN)` |
+| `3` turn right | `turtle.changeDirection(3)` or `turtle.changeDirectionToRight()` |
+| `4` turn left | `turtle.changeDirection(4)` or `turtle.changeDirectionToLeft()` |
+| `5,n` move forward n steps | `turtle.moveTurtle(n)` |
+| `6` display the floor | `turtle.turtleFloor()` |
+| clear the floor *(extra)* | `turtle.clearFloor()` |
+| jump to row r, column c without drawing *(extra)* | `turtle.jumpTurtle(r, c)` |
 
 The turtle stops at the wall instead of walking off the floor.
-
-## Sample drawings
-
-`SampleDrawings` stores each turtle program as an array of commands, for example the
-square from the exercise:
-
-```java
-public static final int[] SQUARE = {
-        2, 5,12, 3, 5,12, 3, 5,12, 3, 5,12, 1, 6, 9
-};
-```
-
-The samples are: the 12-by-12 square, nested squares, a spiral, a staircase,
-a 3-by-3 grid and the word HI.
 
 ## Classes
 
@@ -55,15 +34,13 @@ a 3-by-3 grid and the word HI.
   `changeDirectionToLeft`, `changeDirection`), changes its pen (`changePenStatus`)
   and moves (`moveTurtle`, `jumpTurtle`), asking its sketch pad to mark the cells
   it walks over.
-- `TurtleCommands` carries out the commands: `runCommand` does one command and
-  `runCommands` runs a whole program stored in an array.
-- `SampleDrawings` holds the sample programs as arrays and draws them.
 - `Main` is empty for now.
 
-## Running
+## Tests
 
-`Main` is empty for now. To see the drawings, call `SampleDrawings.drawAll()`
-from `main`, or run commands with `TurtleCommands.runCommand` and
-`TurtleCommands.runCommands`.
+`TurtleTest` checks `changeDirection`, `changePenStatus` and the Deitel exercise:
+starting near the centre of the floor (row 4, column 4), the program
+`2, 5,12, 3, 5,12, 3, 5,12, 3, 5,12, 1, 6, 9` draws a 12-by-12 square and leaves
+the pen up.
 
-Run the tests with `mvn test`, or from IntelliJ.
+Run them with `mvn test`, or from IntelliJ.
